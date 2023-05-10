@@ -1,0 +1,26 @@
+dataA =  read.csv("/Users/tanjiasarker/Downloads/selectedvariables_pulsesurveydata.csv")
+View(dataA)
+
+install.packages('jmv')
+library(jmv)
+
+descriptives(dataA, vars = vars(TBIRTH_YEAR, RHISPANIC 
+                              ,RRACE, EEDUC, MS, EGENID_BIRTH, WRKLOSSRV,
+                              EXPNS_DIF, ANXIOUS, DOWN, PRESCRIPT, INCOME), freq = TRUE)
+
+
+#example to make new smaller dataset
+vars <- c("imbgeco", "blgetmg", 
+          "ctzcntr", "evpdemp", "evmar","gndr",
+          "agea","marsts", "eduyrs", "wkhct","uemp3m")
+
+new_data <- dat[vars]
+#omit missing data
+new_data <- na.omit(new_data )
+#omit 99 values/missing data
+new_data$ONLINEDATE_W56[new_data$ONLINEDATE_W56==99] <- NA
+
+# transferring the values 1 and 2 to 0 and 1 by subtracting 1
+new_data$ONLINEDATE_W56 <- new_data$ONLINEDATE_W56 - 1
+#logistic regression for binary values
+model1 <- glm( ONLINEDATE_W56 ~  . , data = new_data, family = "binomial")
